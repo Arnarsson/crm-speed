@@ -11,9 +11,30 @@ export default function SignupPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [errors, setErrors] = useState<{email?: string, password?: string}>({})
+
+  const validateForm = () => {
+    const newErrors: {email?: string, password?: string} = {}
+    
+    if (!email) {
+      newErrors.email = 'Email is required'
+    }
+    
+    if (!password) {
+      newErrors.password = 'Password is required'
+    }
+    
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    if (!validateForm()) {
+      return
+    }
+    
     setLoading(true)
     setError(null)
 
@@ -37,9 +58,9 @@ export default function SignupPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="max-w-md w-full space-y-8">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create your account
-          </h2>
+          <h1 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Sign Up
+          </h1>
           <p className="mt-2 text-center text-sm text-gray-600">
             Or{' '}
             <Link href="/auth/login" className="font-medium text-blue-600 hover:text-blue-500">
@@ -63,12 +84,14 @@ export default function SignupPage() {
                 name="email"
                 type="email"
                 autoComplete="email"
-                required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                 placeholder="Email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
+              {errors.email && (
+                <div className="text-red-600 text-sm mt-1">{errors.email}</div>
+              )}
             </div>
             <div>
               <label htmlFor="password" className="sr-only">
@@ -79,13 +102,14 @@ export default function SignupPage() {
                 name="password"
                 type="password"
                 autoComplete="new-password"
-                required
-                minLength={6}
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                 placeholder="Password (min 6 characters)"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
+              {errors.password && (
+                <div className="text-red-600 text-sm mt-1">{errors.password}</div>
+              )}
             </div>
           </div>
 

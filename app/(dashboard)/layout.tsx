@@ -30,6 +30,7 @@ export default function DashboardLayout({
   const pathname = usePathname()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [user, setUser] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const checkUser = async () => {
@@ -39,6 +40,7 @@ export default function DashboardLayout({
       } else {
         setUser(user)
       }
+      setLoading(false)
     }
     checkUser()
 
@@ -50,6 +52,18 @@ export default function DashboardLayout({
 
     return () => subscription.unsubscribe()
   }, [router])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return null // Will redirect via useEffect
+  }
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()

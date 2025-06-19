@@ -1,0 +1,84 @@
+
+> crm-speed@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.3.4
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.50.208:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 1460ms
+ ○ Compiling / ...
+ ✓ Compiled / in 3.4s (723 modules)
+ GET / 307 in 3731ms
+ GET / 307 in 51ms
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 1492ms (966 modules)
+ ⨯ TypeError: Invalid URL
+    at eval (lib/supabase.ts:11:2)
+    at (ssr)/./lib/supabase.ts (.next/server/app/(dashboard)/dashboard/page.js:174:1)
+    at __webpack_require__ (.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(ssr)/./app/(dashboard)/layout.tsx:12:71)
+    at (ssr)/./app/(dashboard)/layout.tsx (.next/server/app/(dashboard)/dashboard/page.js:163:1)
+    at Object.__webpack_require__ [as require] (.next/server/webpack-runtime.js:33:43)
+    at JSON.parse (<anonymous>)
+   9 |
+  10 | export const supabase = createClient(
+> 11 |   process.env.NEXT_PUBLIC_SUPABASE_URL,
+     |  ^
+  12 |   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  13 | ) {
+  code: 'ERR_INVALID_URL',
+  input: 'your_supabase_url_here/',
+  digest: '4001523708'
+}
+ GET /dashboard 500 in 2084ms
+ GET / 307 in 27ms
+ ⨯ TypeError: Invalid URL
+    at eval (lib/supabase.ts:11:2)
+    at (ssr)/./lib/supabase.ts (.next/server/app/(dashboard)/dashboard/page.js:174:1)
+    at __webpack_require__ (.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(ssr)/./app/(dashboard)/layout.tsx:12:71)
+    at (ssr)/./app/(dashboard)/layout.tsx (.next/server/app/(dashboard)/dashboard/page.js:163:1)
+    at Object.__webpack_require__ [as require] (.next/server/webpack-runtime.js:33:43)
+    at JSON.parse (<anonymous>)
+   9 |
+  10 | export const supabase = createClient(
+> 11 |   process.env.NEXT_PUBLIC_SUPABASE_URL,
+     |  ^
+  12 |   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  13 | ) {
+  code: 'ERR_INVALID_URL',
+  input: 'your_supabase_url_here/',
+  digest: '4001523708'
+}
+ GET /dashboard 500 in 194ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 534ms (572 modules)
+ GET /favicon.ico 200 in 660ms
+ ✓ Compiled /_not-found in 240ms (972 modules)
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 370ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ TypeError: Invalid URL
+    at eval (lib/supabase.ts:11:2)
+    at (ssr)/./lib/supabase.ts (.next/server/app/(dashboard)/dashboard/page.js:174:1)
+    at __webpack_require__ (.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(ssr)/./app/(dashboard)/layout.tsx:12:71)
+    at (ssr)/./app/(dashboard)/layout.tsx (.next/server/app/(dashboard)/dashboard/page.js:163:1)
+    at Object.__webpack_require__ [as require] (.next/server/webpack-runtime.js:33:43)
+    at JSON.parse (<anonymous>)
+   9 |
+  10 | export const supabase = createClient(
+> 11 |   process.env.NEXT_PUBLIC_SUPABASE_URL,
+     |  ^
+  12 |   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  13 | ) {
+  code: 'ERR_INVALID_URL',
+  input: 'your_supabase_url_here/',
+  digest: '4001523708'
+}
+ GET /dashboard 500 in 413ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 45ms
+ GET /favicon.ico 200 in 42ms
+[?25h
