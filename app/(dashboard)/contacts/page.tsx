@@ -3,8 +3,11 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { Contact } from '@/types/database'
-import { Plus, Search, Edit2, Trash2, Mail, Phone } from 'lucide-react'
+import { Plus, Search, Edit2, Trash2, Mail, Phone, Upload, Linkedin, ChevronDown } from 'lucide-react'
 import { ContactModal } from '@/components/ContactModal'
+import { ImportContacts } from '@/components/ImportContacts'
+import { LinkedInImport } from '@/components/LinkedInImport'
+import { BulkActions } from '@/components/BulkActions'
 
 export default function ContactsPage() {
   const [contacts, setContacts] = useState<Contact[]>([])
@@ -12,10 +15,26 @@ export default function ContactsPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isImportOpen, setIsImportOpen] = useState(false)
+  const [isLinkedInImportOpen, setIsLinkedInImportOpen] = useState(false)
+  const [showImportDropdown, setShowImportDropdown] = useState(false)
+  const [selectedContacts, setSelectedContacts] = useState<string[]>([])
 
   useEffect(() => {
     loadContacts()
   }, [])
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setShowImportDropdown(false)
+    }
+    
+    if (showImportDropdown) {
+      document.addEventListener('click', handleClickOutside)
+      return () => document.removeEventListener('click', handleClickOutside)
+    }
+  }, [showImportDropdown])
 
   const loadContacts = async () => {
     setLoading(true)
@@ -59,6 +78,26 @@ export default function ContactsPage() {
     loadContacts()
   }
 
+  const handleSelectContact = (contactId: string, isSelected: boolean) => {
+    if (isSelected) {
+      setSelectedContacts(prev => [...prev, contactId])
+    } else {
+      setSelectedContacts(prev => prev.filter(id => id !== contactId))
+    }
+  }
+
+  const handleSelectAll = (isSelected: boolean) => {
+    if (isSelected) {
+      setSelectedContacts(filteredContacts.map(contact => contact.id))
+    } else {
+      setSelectedContacts([])
+    }
+  }
+
+  const clearSelection = () => {
+    setSelectedContacts([])
+  }
+
   const filteredContacts = contacts.filter(contact => {
     const searchLower = searchTerm.toLowerCase()
     return (
@@ -79,10 +118,49 @@ export default function ContactsPage() {
               Contacts
             </h2>
           </div>
-          <div className="mt-4 flex md:mt-0 md:ml-4">
+          <div className="mt-4 flex md:mt-0 md:ml-4 space-x-3">
+            {/* Import dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setShowImportDropdown(!showImportDropdown)}
+                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                Import
+                <ChevronDown className="h-4 w-4 ml-2" />
+              </button>
+              
+              {showImportDropdown && (
+                <div className="absolute right-0 z-10 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                  <div className="py-1">
+                    <button
+                      onClick={() => {
+                        setIsImportOpen(true)
+                        setShowImportDropdown(false)
+                      }}
+                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      <Upload className="h-4 w-4 mr-3" />
+                      Import from CSV
+                    </button>
+                    <button
+                      onClick={() => {
+                        setIsLinkedInImportOpen(true)
+                        setShowImportDropdown(false)
+                      }}
+                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      <Linkedin className="h-4 w-4 mr-3 text-blue-600" />
+                      Import from LinkedIn
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
             <button
               onClick={handleCreate}
-              className="ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               <Plus className="h-4 w-4 mr-2" />
               Add Contact
@@ -104,6 +182,12 @@ export default function ContactsPage() {
             />
           </div>
         </div>
+
+        <BulkActions
+          selectedContacts={selectedContacts}
+          onSuccess={loadContacts}
+          onClearSelection={clearSelection}
+        />
 
         <div className="mt-6">
           {loading ? (
@@ -141,12 +225,35 @@ export default function ContactsPage() {
             </div>
           ) : (
             <div className="bg-white shadow overflow-hidden sm:rounded-md">
+              {/* Select all header */}
+              {filteredContacts.length > 0 && (
+                <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={selectedContacts.length === filteredContacts.length}
+                      onChange={(e) => handleSelectAll(e.target.checked)}
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                    <span className="ml-2 text-sm text-gray-700">
+                      Select all {filteredContacts.length} contacts
+                    </span>
+                  </label>
+                </div>
+              )}
+              
               <ul className="divide-y divide-gray-200">
                 {filteredContacts.map((contact) => (
                   <li key={contact.id}>
                     <div className="px-4 py-4 sm:px-6 hover:bg-gray-50">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center">
+                          <input
+                            type="checkbox"
+                            checked={selectedContacts.includes(contact.id)}
+                            onChange={(e) => handleSelectContact(contact.id, e.target.checked)}
+                            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded mr-4"
+                          />
                           <div className="flex-shrink-0">
                             <div className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center">
                               <span className="text-white font-medium">
@@ -220,6 +327,18 @@ export default function ContactsPage() {
         isOpen={isModalOpen}
         onClose={handleModalClose}
         contact={selectedContact}
+      />
+      
+      <ImportContacts
+        isOpen={isImportOpen}
+        onClose={() => setIsImportOpen(false)}
+        onSuccess={loadContacts}
+      />
+      
+      <LinkedInImport
+        isOpen={isLinkedInImportOpen}
+        onClose={() => setIsLinkedInImportOpen(false)}
+        onSuccess={loadContacts}
       />
     </div>
   )
